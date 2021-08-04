@@ -102,7 +102,9 @@ import java.lang.annotation.Target;
  * @since 3.0
  * @see org.springframework.web.context.request.WebRequest
  */
+//该注解作用对象为方法
 @Target(ElementType.METHOD)
+//在运行时有效
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ExceptionHandler {
@@ -111,6 +113,7 @@ public @interface ExceptionHandler {
 	 * Exceptions handled by the annotated method. If empty, will default to any
 	 * exceptions listed in the method argument list.
 	 */
+	// value()可以指定异常类
 	Class<? extends Throwable>[] value() default {};
 
 }

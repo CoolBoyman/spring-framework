@@ -72,9 +72,12 @@ import org.springframework.stereotype.Component;
  * @see org.springframework.stereotype.Controller
  * @see RestControllerAdvice
  */
+//该注解作用对象为类对象
 @Target(ElementType.TYPE)
+//在运行时有效
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+//bean对象交给spring管理生成
 @Component
 public @interface ControllerAdvice {
 

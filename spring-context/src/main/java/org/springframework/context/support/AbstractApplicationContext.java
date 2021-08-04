@@ -547,42 +547,63 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
 
 			// Prepare this context for refreshing.
+			// 准备此上下文來进行刷新。状态值的更新
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 告诉子类刷新内部 bean 工厂
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			// 注册一些容器中需要的系统 bean 例如：classLoader 等
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// 允许容器的子类去注册 postProcessor，钩子方法
 				postProcessBeanFactory(beanFactory);
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
 				// Invoke factory processors registered as beans in the context.
+				// 激活在容器中注册为 bean 的 BeanFactoryPostProcessors
+				// 扫描应用中所有 BeanDefinition 并注册到容器之中
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 注册拦截 bean 创建过程的 BeanPostProcessor
 				registerBeanPostProcessors(beanFactory);
 				beanPostProcess.end();
 
 				// Initialize message source for this context.
+				// 给 ApplicationContext 提供消息源
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 初始化 ApplicationEventMulticaster 该类作为事件发布者，
+				// 可以存储所有事件监听者信息，并根据不同的事件，通知不同的事件监听者。
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				// 预留给 AbstractApplicationContext 的子类用于初始化其他特殊的 bean，
+				// 该方法需要在所有单例 bean 初始化之前调用
+				// 比如 Web 容器就会去初始化一些和主题展示相关的 Bean（ThemeSource）
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 注册监听器（检查监听器的 bean 并注册它们）
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				// 设置自定义的类型转化器 ConversionService，
+				// 设置自定义 AOP 相关的类 LoadTimeWeaverAware，
+				// 清除临时的 ClassLoader
+				// 实例化所有的类（懒加载的类除外）
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
+				// 初始化容器的生命周期事件处理器，（默认使用 DefaultLifecycleProcessor），调用扩展了 SmartLifecycle 接口的 start 方法
+				// 当 Spring 容器加载所有 bean 并完成初始化之后，会接着回调实现该接口的类中对应的方法（start 方法）
+				// 与 发布容器刷新完毕事件 ContextRefreshedEvent 给对应的事件监听者
 				finishRefresh();
 			}
 
