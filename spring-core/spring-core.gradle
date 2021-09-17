@@ -32,24 +32,24 @@ task objenesisRepackJar(type: ShadowJar) {
 }
 
 dependencies {
-	cglib("cglib:cglib:${cglibVersion}@jar")
-	objenesis("org.objenesis:objenesis:${objenesisVersion}@jar")
+	cglib("cglib:cglib:${cglibVersion}@jar")	// cglib动态代理
+	objenesis("org.objenesis:objenesis:${objenesisVersion}@jar")	// objenesis集成
 	coroutines(project(path: ":kotlin-coroutines", configuration: 'classesOnlyElements'))
 	compile(files(cglibRepackJar))
 	compile(files(objenesisRepackJar))
-	compile(project(":spring-jcl"))
+	compile(project(":spring-jcl"))	// 日志
 	compileOnly(project(":kotlin-coroutines"))
-	compileOnly("io.projectreactor.tools:blockhound")
-	optional("net.sf.jopt-simple:jopt-simple")
-	optional("org.aspectj:aspectjweaver")
+	compileOnly("io.projectreactor.tools:blockhound")	// java agent[监控工具](https://github.com/reactor/BlockHound)
+	optional("net.sf.jopt-simple:jopt-simple")	// 命令行解析工具
+	optional("org.aspectj:aspectjweaver")	// eclipse旗下的http://www.eclipse.org/aspectj/
 	optional("org.jetbrains.kotlin:kotlin-reflect")
 	optional("org.jetbrains.kotlin:kotlin-stdlib")
-	optional("io.projectreactor:reactor-core")
-	optional("io.reactivex:rxjava")
-	optional("io.reactivex:rxjava-reactive-streams")
-	optional("io.reactivex.rxjava2:rxjava")
-	optional("io.reactivex.rxjava3:rxjava")
-	optional("io.netty:netty-buffer")
+	optional("io.projectreactor:reactor-core")	// 非阻塞 IO
+	optional("io.reactivex:rxjava")	// Reactive Extension for Java
+	optional("io.reactivex:rxjava-reactive-streams")// rxjava streams操作
+	optional("io.reactivex.rxjava2:rxjava")// 向下兼容集成rxjava2
+	optional("io.reactivex.rxjava3:rxjava")// 集成rxjava3
+	optional("io.netty:netty-buffer")// nio框架集成
 	testCompile("io.projectreactor:reactor-test")
 	testCompile("com.google.code.findbugs:jsr305")
 	testCompile("javax.annotation:javax.annotation-api")
@@ -59,13 +59,13 @@ dependencies {
 	testCompile("org.xmlunit:xmlunit-matchers")
 	testCompile(project(":kotlin-coroutines"))
 	testCompile("io.projectreactor.tools:blockhound")
-	testFixturesImplementation("io.projectreactor:reactor-test")
-	testFixturesImplementation("com.google.code.findbugs:jsr305")
+	testFixturesImplementation("io.projectreactor:reactor-test")// reactor 测试包
+	testFixturesImplementation("com.google.code.findbugs:jsr305")// 这个比较有意思，使用google的findbugs
 	testFixturesImplementation("org.junit.platform:junit-platform-launcher")
 	testFixturesImplementation("org.junit.jupiter:junit-jupiter-api")
 	testFixturesImplementation("org.junit.jupiter:junit-jupiter-params")
 	testFixturesImplementation("org.assertj:assertj-core")
-	testFixturesImplementation("org.xmlunit:xmlunit-assertj")
+	testFixturesImplementation("org.xmlunit:xmlunit-assertj")// xml 测试相关
 }
 
 jar {
