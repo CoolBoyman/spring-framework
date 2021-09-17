@@ -154,8 +154,23 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
+			/**
+			 * 如果单例池中不存在才会add
+			 * 因为这里主要为了循环依赖服务的代码
+			 * 如果bean存在单例池的话其实已经是一个完整的bean了
+			 * 一个完整的bean自然也是已经完成属性注入，循环依赖已经依赖上了
+			 * 所以如果这个对象已经是一个完整的bean，就不需要关心，不需要进入 if
+			 * 如果一级缓存中没有改实例，则放入三级缓存中
+			 */
 			if (!this.singletonObjects.containsKey(beanName)) {
+				// 放入三级缓存
 				this.singletonFactories.put(beanName, singletonFactory);
+				/**
+				 * 从三级缓存中remove掉当前bean
+				 * 为什么要remove？抛开细节，这三个map当中其实存的都是一个对象
+				 * 	spring的做法是三个不能同时存在
+				 */
+				// 从二级缓存中移除
 				this.earlySingletonObjects.remove(beanName);
 				this.registeredSingletons.add(beanName);
 			}
